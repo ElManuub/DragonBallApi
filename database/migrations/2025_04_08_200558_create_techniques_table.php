@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('technique');
             $table->integer('power');
-            $table->foreignId('categories_id')->constrained()->onDelete('cascade');
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

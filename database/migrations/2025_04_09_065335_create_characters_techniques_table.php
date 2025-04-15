@@ -23,8 +23,6 @@ return new class extends Migration
             ->nullable()
             ->constrained('techniques')
             ->onDelete('cascade');
-
-            $table->timestamps();
         });
     }
 
