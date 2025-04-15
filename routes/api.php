@@ -4,15 +4,11 @@ use App\Http\Controllers\auth\UserAuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CharacterController;
 use App\Http\Controllers\TechniqueController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
+//authentication
 Route::post('/login', [UserAuthController::class, 'login'])->name('login');
-Route::post('/register', [UserAuthController::class, 'register']);
+Route::post('/register', [UserAuthController::class, 'register'])->name('register');
 
 Route::middleware(['auth:api'])->group(function () {
     //characters
@@ -21,4 +17,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::resource('/categorias', CategoryController::class);
     //techniques
     Route::resource('/tecnicas', TechniqueController::class);
+
+    //logout
+    Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');
 });

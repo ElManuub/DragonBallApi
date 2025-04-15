@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+
 class CharactersResource extends JsonResource
 {
     /**
@@ -21,7 +22,7 @@ class CharactersResource extends JsonResource
             'breed' => $this->breed,
             'power' => $this->power,
             'character_type' => $this->character_type,
-            'techniques' => $this->techniques
+            'techniques' => TechquineResource::collection($this->techniques)
         ];
     }
 }

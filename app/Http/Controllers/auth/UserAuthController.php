@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Validation\ValidationException;
 
@@ -38,7 +37,6 @@ class UserAuthController extends Controller
                 'error' => $error->validator->errors(),
                 'message' => 'hubo un problema con la validacion de algun dato.'
             ], 422);
-
         } catch (Exception $error) {
 
             return response()->json([
@@ -65,9 +63,8 @@ class UserAuthController extends Controller
                 'usuario' => [
                     'email' => $user->email,
                     'id' => $user->id
-                    ]
+                ]
             ], 200);
-
         } catch (JWTException $e) {
 
             return response()->json([
@@ -75,5 +72,30 @@ class UserAuthController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function getUser()
+    {
+        try {
+            if (!$user = JWTAuth::parseToken()->authenticate()) {
+                return response()->json([
+                        'error' => 'Usuario no encontrado.'
+                ], 404);
+            }
+        } catch (JWTException $e) {
+            return response()->json([
+                'message' => 'Token invalido',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+
+        return response()->json(compact('user'));
+    }
+
+    public function logout()
+    {
+        JWTAuth::invalidate(JWTAuth::getToken());
+
+        return response()->json(['message' => 'Session cerrada con exito!']);
     }
 }

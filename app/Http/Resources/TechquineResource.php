@@ -15,10 +15,11 @@ class TechquineResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'technique' => $this->technique,
             'power' => $this->power,
             'category_id' => $this->category_id,
-            'categories' => $this->category
+            'category' => new CategoryResource($this->category)
         ];
     }
 }
