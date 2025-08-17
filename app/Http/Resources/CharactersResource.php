@@ -22,7 +22,8 @@ class CharactersResource extends JsonResource
             'breed' => $this->breed,
             'power' => $this->power,
             'character_type' => $this->character_type,
-            'techniques' => TechquineResource::collection($this->techniques)
+            'techniques' => TechquineResource::collection($this->techniques),
+            'image_url' =>  $this->image_url
         ];
     }
 }

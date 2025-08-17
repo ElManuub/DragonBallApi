@@ -18,7 +18,8 @@ return new class extends Migration
             $table->integer('age');
             $table->string('breed');
             $table->decimal('power', 8, 2);
-            $table->enum('character_type', ['good', 'bad', 'unknow'])->default('unknow');
+            $table->string('image_url')->nullable();
+            $table->enum('character_type', ['good', 'bad', 'unknown'])->default('unknown');
             $table->timestamps();
         });
 

@@ -8,6 +8,7 @@ use App\Models\Technique;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Storage;
 
 class CharacterController extends Controller
 {
@@ -27,17 +28,19 @@ class CharacterController extends Controller
 
     public function store(Request $request)
     {
+        //dd($request->image_url);
         try {
             // Validación
-            $validated = $request->validate(
+            $request->validate(
                 [
                     'name' => 'required',
                     'age' => 'required|integer',
                     'breed' => 'required',
                     'power' => 'required|max:1000000',
                     'character_type' => 'required|in:good,bad',
-                    'techniques' => 'required|array',
+                    'techniques' => 'nullable|array',
                     'techniques.*' => 'integer|exists:techniques,id',
+                    'image_url' => 'nullable|image|mimes:jpeg,png,jpg,JPG,gif|max:5120' //max 5MB
                 ],
                 ['techniques.*.exists' => 'Tecnica no existe']
             );
@@ -52,7 +55,25 @@ class CharacterController extends Controller
             ]);
 
             // Asociar técnicas
-            $character->techniques()->sync($request->techniques);
+            $character->techniques()->sync($request->techniques); // funcion en model
+
+            //guardado de imagenes
+            if ($request->hasFile('image_url')) {
+                try {
+                    $image = $request->file('image_url'); //guardo imagen tipo archivo
+                    $ext = $image->extension(); //extension (jpg, png) para nombre personalizado
+                    $name = "personaje_" . $character->id . "." . $ext; //nombre personalizado
+                    $imagePath = $image->storeAs('images', $name, 'public'); //guardado ruta publica
+                    $character->image_url = url(Storage::url($imagePath)); //guardar en store
+                } catch (Exception $e) {
+                    return response()->json([
+                        'message' => 'Error al guardar la imagen!',
+                        'error' => $e->getMessage()
+                    ], 500);
+                }
+            }
+
+            $character->save();
 
             // Devolver con técnicas cargadas
             return new CharactersResource($character->load('techniques.category'));
@@ -95,6 +116,7 @@ class CharacterController extends Controller
                     'character_type' => 'required|in:good,bad',
                     'techniques' => 'required|array',
                     'techniques.*' => 'integer|exists:techniques,id',
+                    'image_url' => 'nullable|image|mimes:jpeg,png,jpg,JPG,gif|max:5120' //max 5MB
                 ],
                 ['techniques.*.exists' => 'Tecnica no existe']
             );
@@ -105,7 +127,7 @@ class CharacterController extends Controller
             if (!$character) {
                 return response()->json([
                     'message' => 'Personaje no encontrado.',
-                    'personaje' => $character
+                    'personaje' => null
                 ], 404);
             }
 
@@ -115,6 +137,21 @@ class CharacterController extends Controller
             $character->breed = $request->breed;
             $character->power = $request->power;
             $character->character_type = $request->character_type;
+
+            if ($request->hasFile('image_url')) {
+                try {
+                    $image = $request->file('image_url'); //guardo imagen tipo archivo
+                    $ext = $image->extension(); //extension (jpg, png) para nombre personalizado
+                    $name = "personaje_" . $character->id . "." . $ext; //nombre personalizado
+                    $imagePath = $image->storeAs('images', $name, 'public'); //guardado ruta publica
+                    $character->image_url = url(Storage::url($imagePath)); //guardar en store
+                } catch (Exception $e) {
+                    return response()->json([
+                        'message' => 'Error al guardar la imagen!',
+                        'error' => $e->getMessage()
+                    ], 500);
+                }
+            }
 
             $character->save();
 

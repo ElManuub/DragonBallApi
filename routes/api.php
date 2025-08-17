@@ -7,10 +7,10 @@ use App\Http\Controllers\TechniqueController;
 use Illuminate\Support\Facades\Route;
 
 //authentication
-Route::post('/login', [UserAuthController::class, 'login'])->name('login');
-Route::post('/register', [UserAuthController::class, 'register'])->name('register');
-
-Route::middleware(['auth:api'])->group(function () {
+//Route::post('/login', [UserAuthController::class, 'login'])->name('login');
+//Route::post('/register', [UserAuthController::class, 'register'])->name('register');
+//
+//Route::middleware(['auth:api'])->group(function () {
     //characters
     Route::resource('/personajes', CharacterController::class);
     //categories
@@ -20,4 +20,4 @@ Route::middleware(['auth:api'])->group(function () {
 
     //logout
     Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');
-});
+//});
